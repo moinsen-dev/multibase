@@ -104,6 +104,58 @@ $ multibase up
      Studio: http://localhost:3000?project=tinideas | http://100.64.0.1:3000?project=tinideas
 ```
 
+## AI Control (MCP Server)
+
+multibase comes with a built-in MCP server that lets AI agents manage your Supabase cluster.
+
+### stdio mode (local AI agents)
+
+Pipe multibase's MCP server to Claude Code, Hermes, or any MCP-compatible agent:
+
+```bash
+# In Claude Code / Cursor / etc:
+multibase mcp --transport stdio
+
+# The agent can now:
+# - Add projects   → multibase_add_project("watch-now", 55320)
+# - Start/stop     → multibase_up() / multibase_down()
+# - Check status   → multibase_status()
+# - View config    → multibase_list_projects()
+```
+
+### HTTP mode (remote AI agents)
+
+Run the MCP server over HTTP for remote control via Tailscale:
+
+```bash
+multibase mcp --transport http --port 8085
+```
+
+Then configure your AI agent with:
+```json
+{
+  "mcpServers": {
+    "multibase": {
+      "url": "http://100.64.0.1:8085"
+    }
+  }
+}
+```
+
+### Available MCP tools
+
+| Tool | Description |
+|------|-------------|
+| `multibase_init` | Create new multibase config |
+| `multibase_add_project` | Add Supabase project |
+| `multibase_remove_project` | Remove project |
+| `multibase_up` | Start all services |
+| `multibase_down` | Stop all services |
+| `multibase_status` | Running containers + RAM |
+| `multibase_list_projects` | Configured projects |
+| `multibase_show_config` | Full compose config |
+| `multibase_show_kong_config` | Kong declarative config |
+
 ## Requirements
 
 - Docker / OrbStack

@@ -1,0 +1,19 @@
+# multibase configuration example
+# Copy to multibase.yaml and adjust for your projects.
+# Each project needs a unique port_base.
+
+name: my-dev
+shared:
+  db_image: public.ecr.aws/supabase/postgres:17.6.1.132
+  studio_port: 3000
+  kong_port: 8000
+  analytics: true
+  storage: true
+
+projects:
+  - name: tinideas
+    port_base: 54330
+  - name: watch_now
+    port_base: 55320
+  - name: together-mvp
+    port_base: 54320

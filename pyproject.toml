@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multibase"
+version = "0.1.0"
+description = "Run multiple Supabase projects on one host — share the heavy services, keep projects isolated."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+  {name = "moinsen-dev", email = "hi@moinsen.dev"},
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+  "typer>=0.12,<1",
+  "pyyaml>=6.0,<7",
+  "pydantic>=2,<3",
+  "httpx>=0.27,<1",
+]
+
+[project.urls]
+Homepage = "https://github.com/moinsen-dev/multibase"
+Repository = "https://github.com/moinsen-dev/multibase"
+Documentation = "https://github.com/moinsen-dev/multibase#readme"
+
+[project.scripts]
+multibase = "multibase.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/multibase"]

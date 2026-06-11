@@ -8,6 +8,7 @@ import typer
 
 from multibase import orchestrator
 from multibase.config import MultibaseConfig, ProjectConfig
+from multibase.kong_config import generate_kong_yaml, save_kong_yaml
 
 app = typer.Typer(
     name="multibase",
@@ -208,6 +209,30 @@ def _get_tailscale_ip() -> str | None:
     except Exception:
         pass
     return None
+
+
+@app.command()
+def mcp(
+    transport: str = typer.Option("stdio", "--transport", "-t", help="Transport: stdio or http"),
+    host: str = typer.Option("0.0.0.0", "--host", help="HTTP host (only for --transport http)"),
+    port: int = typer.Option(8085, "--port", "-p", help="HTTP port (only for --transport http)"),
+):
+    """Start the multibase MCP server (for AI agent control).
+
+    stdio mode: pipe to/from an AI agent (Claude Code, Hermes, etc.)
+    http mode:  remote control via REST/MCP over HTTP
+    """
+    from multibase.mcp_server import serve_stdio, serve_http
+
+    if transport == "stdio":
+        typer.echo("🧠 multibase MCP server (stdio) — waiting for AI agent...", err=True)
+        serve_stdio()
+    elif transport == "http":
+        typer.echo(f"🧠 multibase MCP server (HTTP) — listening on http://{host}:{port}", err=True)
+        serve_http(host=host, port=port)
+    else:
+        typer.echo(f"❌ Unknown transport: {transport}", err=True)
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

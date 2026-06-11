@@ -4,7 +4,6 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -60,11 +59,18 @@ def build_shared_services(cfg: MultibaseConfig) -> dict:
     svc = {}
 
     # ── Postgres (multi-database) ──
-    pg_volumes = ["multibase_db_data:/var/lib/postgresql/data"]
+    pg_volumes = [
+        "multibase_db_data:/var/lib/postgresql/data",
+        "./src/multibase/templates/init-db.sh:/docker-entrypoint-initdb.d/00-multibase.sh:ro",
+    ]
     pg_cmd = []
     for proj in cfg.projects:
         db_name = proj.name.replace("-", "_")
         pg_cmd.append(f"CREATE DATABASE {db_name};")
+
+    # Write project list for init script
+    projects_txt = "\n".join(p.name for p in cfg.projects)
+    Path("projects.txt").write_text(projects_txt)
 
     svc["db"] = {
         "image": S.db_image,
@@ -79,6 +85,7 @@ def build_shared_services(cfg: MultibaseConfig) -> dict:
         "environment": {
             "POSTGRES_PASSWORD": "postgres",
             "POSTGRES_HOST": "/var/run/postgresql",
+            "MULTIBASE_CONFIG": "/etc/multibase/projects.txt",
         },
         "labels": {"multibase.service": "db"},
     }

@@ -22,8 +22,11 @@ dependencies = [
   "typer>=0.12,<1",
   "pyyaml>=6.0,<7",
   "pydantic>=2,<3",
-  "httpx>=0.27,<1",
 ]
+
+[project.optional-dependencies]
+mcp = []
+all = ["multibase[mcp]"]
 
 [project.urls]
 Homepage = "https://github.com/moinsen-dev/multibase"
